@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Registration Form</title>
+
+<style>
+
+body{
+font-family: Arial;
+background: linear-gradient(120deg,#6a11cb,#2575fc);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:white;
+padding:25px;
+width:350px;
+border-radius:10px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h2{
+text-align:center;
+}
+
+input{
+width:100%;
+padding:8px;
+margin-top:5px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+.error{
+color:red;
+font-size:12px;
+height:14px;
+}
+
+button{
+width:100%;
+padding:10px;
+background:#2575fc;
+color:white;
+border:none;
+border-radius:5px;
+margin-top:10px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1a5edb;
+}
+
+.strength{
+height:8px;
+margin-top:4px;
+border-radius:4px;
+}
+
+.toggle{
+font-size:12px;
+color:blue;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Registration</h2>
+
+<form id="form">
+
+<label>Name</label>
+<input type="text" id="name">
+<div class="error" id="nameError"></div>
+
+<label>Email</label>
+<input type="text" id="email">
+<div class="error" id="emailError"></div>
+
+<label>Phone</label>
+<input type="text" id="phone">
+<div class="error" id="phoneError"></div>
+
+<label>Password</label>
+<input type="password" id="password">
+<div class="toggle" id="toggle">Show Password</div>
+<div class="strength" id="strengthBar"></div>
+
+<button type="submit">Register</button>
+
+</form>
+
+</div>
+
+<script>
+
+const nameInput=document.getElementById("name")
+const emailInput=document.getElementById("email")
+const phoneInput=document.getElementById("phone")
+const passInput=document.getElementById("password")
+
+const nameError=document.getElementById("nameError")
+const emailError=document.getElementById("emailError")
+const phoneError=document.getElementById("phoneError")
+const strengthBar=document.getElementById("strengthBar")
+
+let submissions=JSON.parse(localStorage.getItem("submissions"))||[]
+
+// NAME VALIDATION
+nameInput.addEventListener("input",()=>{
+if(nameInput.value.length<3){
+nameError.innerText="Minimum 3 characters"
+}else{
+nameError.innerText=""
+}
+})
+
+// EMAIL VALIDATION
+emailInput.addEventListener("input",()=>{
+const pattern=/^[^ ]+@[^ ]+\.[a-z]{2,3}$/
+if(!emailInput.value.match(pattern)){
+emailError.innerText="Invalid email"
+}else{
+emailError.innerText=""
+}
+})
+
+// PHONE VALIDATION
+phoneInput.addEventListener("input",()=>{
+const pattern=/^[0-9]{10}$/
+if(!phoneInput.value.match(pattern)){
+phoneError.innerText="Phone must be 10 digits"
+}else{
+phoneError.innerText=""
+}
+})
+
+// PASSWORD STRENGTH
+passInput.addEventListener("input",()=>{
+
+let strength=0
+let pass=passInput.value
+
+if(pass.length>=6) strength++
+if(/[A-Z]/.test(pass)) strength++
+if(/[0-9]/.test(pass)) strength++
+if(/[!@#$%^&*]/.test(pass)) strength++
+
+const colors=["red","orange","yellow","green"]
+strengthBar.style.width=(strength*25)+"%"
+strengthBar.style.background=colors[strength-1]
+
+})
+
+// SHOW / HIDE PASSWORD
+document.getElementById("toggle").addEventListener("click",function(){
+
+if(passInput.type==="password"){
+passInput.type="text"
+this.innerText="Hide Password"
+}else{
+passInput.type="password"
+this.innerText="Show Password"
+}
+
+})
+
+// FORM SUBMIT
+document.getElementById("form").addEventListener("submit",(e)=>{
+
+e.preventDefault()
+
+const data={
+name:nameInput.value,
+email:emailInput.value,
+phone:phoneInput.value
+}
+
+submissions.push(data)
+
+localStorage.setItem("submissions",JSON.stringify(submissions))
+
+alert("Registration Saved!")
+
+e.target.reset()
+strengthBar.style.width="0"
+
+})
+
+</script>
+
+</body>
+</html>
